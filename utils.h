@@ -11,7 +11,7 @@ void help()
     std::cout << "exe <N size of packet commands wich it waits>" << std::endl;
     std::cout << "You can put more commands between { .... and ...} symbols - it's dynamic list" << std::endl;
     std::cout << "The end of programm is EOF in any moment. After that it show in console commands's list of static in push order and dynamic list ignore." << std::endl;
-};
+}
 
 
 
@@ -25,7 +25,7 @@ bool IsEndOfDymamicPacket(vector<string>& vpack) {
             cntCloseBrackets++;
     }
     return (cntOpenBrackets == cntCloseBrackets && cntOpenBrackets > 0 && cntCloseBrackets > 0);
-};
+}
 
 bool IsStartOfDynamicPacket(string command, vector<string>& pack) {
     int cntOpenBrackets = 0;
@@ -39,7 +39,7 @@ bool IsStartOfDynamicPacket(string command, vector<string>& pack) {
             cntCommands++;
     }
     return cntOpenBrackets > 0 && cntCommands == 0;
-};
+}
 
 bool AreThereSubPackets(vector<string>& vpack) {
     int cntOpenBrackets = 0;
@@ -51,7 +51,7 @@ bool AreThereSubPackets(vector<string>& vpack) {
             cntCommands++;
     }
     return cntOpenBrackets > 0 && cntCommands > 1;
-};
+}
 
 bool IsEndOfStaticPacket(string command, vector<string>& statpack, size_t limit, vector<string>& dynampack) {
     if (command == "EOF")
@@ -68,7 +68,7 @@ bool IsEndOfStaticPacket(string command, vector<string>& statpack, size_t limit,
         statpack.push_back(command);
     }
     return statpack.size() == limit;
-};
+}
 
 bool IsRunPacketFile(string command, vector<string>& statpack, size_t limit, vector<string>& dynampack) {
 
@@ -88,7 +88,7 @@ bool IsRunPacketFile(string command, vector<string>& statpack, size_t limit, vec
 
         return false;
     }
-};
+}
 
 void RunPacket(string command, vector<string>& statpack, vector<string>& dynampack) {
     if (statpack.size() > 0) {
@@ -114,4 +114,4 @@ void RunPacket(string command, vector<string>& statpack, vector<string>& dynampa
         }
     }
     cout << endl;
-};
+}
