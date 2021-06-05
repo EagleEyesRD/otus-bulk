@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-using namespace std;
 
 void help()
 {
@@ -11,11 +10,27 @@ void help()
     std::cout << "exe <N size of packet commands wich it waits>" << std::endl;
     std::cout << "You can put more commands between { .... and ...} symbols - it's dynamic list" << std::endl;
     std::cout << "The end of programm is EOF in any moment. After that it show in console commands's list of static in push order and dynamic list ignore." << std::endl;
+};
+
+class PackManager {
+    std::vector<std::string> statpack;
+    std::vector<std::string> dynampack;
+public:
+    PackManager();
+    bool IsRunPacketFile(std::string command, size_t limit);
+    void RunPacket(std::string command);
+private:
+    bool IsEndOfDymamicPacket(std::vector<std::string>& vpack);
+    bool IsStartOfDynamicPacket(std::string command, std::vector<std::string>& pack);
+    bool AreThereSubPackets(std::vector<std::string>& vpack);
+    bool IsEndOfStaticPacket(std::string command, size_t limit);
+};
+
+PackManager::PackManager() {
+    statpack = std::vector<std::string>();
+    dynampack = std::vector<std::string>();
 }
-
-
-
-bool IsEndOfDymamicPacket(vector<string>& vpack) {
+bool PackManager::IsEndOfDymamicPacket(std::vector<std::string>& vpack) {
     int cntOpenBrackets = 0;
     int cntCloseBrackets = 0;
     for (auto& xcomm : vpack) {
@@ -27,7 +42,7 @@ bool IsEndOfDymamicPacket(vector<string>& vpack) {
     return (cntOpenBrackets == cntCloseBrackets && cntOpenBrackets > 0 && cntCloseBrackets > 0);
 }
 
-bool IsStartOfDynamicPacket(string command, vector<string>& pack) {
+bool PackManager::IsStartOfDynamicPacket(std::string command, std::vector<std::string>& pack) {
     int cntOpenBrackets = 0;
     int cntCommands = 0;
     pack.push_back(command);
@@ -39,9 +54,9 @@ bool IsStartOfDynamicPacket(string command, vector<string>& pack) {
             cntCommands++;
     }
     return cntOpenBrackets > 0 && cntCommands == 0;
-}
+};
 
-bool AreThereSubPackets(vector<string>& vpack) {
+bool PackManager::AreThereSubPackets(std::vector<std::string>& vpack) {
     int cntOpenBrackets = 0;
     int cntCommands = 0;
     for (auto& xcomm : vpack) {
@@ -51,9 +66,9 @@ bool AreThereSubPackets(vector<string>& vpack) {
             cntCommands++;
     }
     return cntOpenBrackets > 0 && cntCommands > 1;
-}
+};
 
-bool IsEndOfStaticPacket(string command, vector<string>& statpack, size_t limit, vector<string>& dynampack) {
+bool PackManager::IsEndOfStaticPacket(std::string command, size_t limit) {
     if (command == "EOF")
         return true;
 
@@ -68,12 +83,11 @@ bool IsEndOfStaticPacket(string command, vector<string>& statpack, size_t limit,
         statpack.push_back(command);
     }
     return statpack.size() == limit;
-}
+};
 
-bool IsRunPacketFile(string command, vector<string>& statpack, size_t limit, vector<string>& dynampack) {
-
+bool PackManager::IsRunPacketFile(std::string command, size_t limit) {
     if (dynampack.size() == 0) {
-        if (IsEndOfStaticPacket(command, statpack, limit, dynampack))
+        if (IsEndOfStaticPacket(command, limit))
             return true;
 
         return false;
@@ -90,13 +104,13 @@ bool IsRunPacketFile(string command, vector<string>& statpack, size_t limit, vec
     }
 }
 
-void RunPacket(string command, vector<string>& statpack, vector<string>& dynampack) {
+void PackManager::RunPacket(std::string command){
     if (statpack.size() > 0) {
-        for (string& xcommand : statpack)
+        for (std::string& xcommand : statpack)
             if (xcommand != "{")
                 if (xcommand != "}")
                     if (xcommand != "EOF")
-                        cout << xcommand << ", ";
+                        std::cout << xcommand << ", ";
         statpack.clear();
     }
     else {
@@ -104,14 +118,14 @@ void RunPacket(string command, vector<string>& statpack, vector<string>& dynampa
             if (command != "EOF")
             {
                 if (IsEndOfDymamicPacket(dynampack)) {
-                    for (string& xcommand : dynampack)
+                    for (std::string& xcommand : dynampack)
                         if (xcommand != "{")
                             if (xcommand != "}")
-                                cout << xcommand << ", ";
+                                std::cout << xcommand << ", ";
                 }
             }
             dynampack.clear();
         }
     }
-    cout << endl;
+    std::cout << std::endl;
 }

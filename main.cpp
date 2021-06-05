@@ -1,6 +1,6 @@
 ﻿#include "utils.h"
 
-std::ostream& operator << (std::ostream& stream, const vector<string>& v)
+std::ostream& operator << (std::ostream& stream, const std::vector<std::string>& v)
 {
     for (auto &command : v)
         stream << command << std::endl;
@@ -10,23 +10,18 @@ std::ostream& operator << (std::ostream& stream, const vector<string>& v)
 
 int main(int argc, char *argv[] )
 {
-    
     int N = 0;
     if (argc > 1)
-       N = stoi(argv[1]);
-    
-    vector<string> packet;
-    vector<string> packetDynamic;
+       N = std::stoi(argv[1]);
+    auto pm = new PackManager();
     if (N == 0) {
         help();
     }
     else {
         for (std::string line; std::getline(std::cin, line);)
-            if (IsRunPacketFile(line, packet, N, packetDynamic)) {
-                RunPacket(line, packet, packetDynamic);
-            }
+            if (pm->IsRunPacketFile(line, N))
+                pm->RunPacket(line);
     }
-     
     return 0;
 }
 
